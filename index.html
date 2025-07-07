@@ -195,8 +195,13 @@
                 position: fixed;
                 left: -250px;
                 width: 250px;
+                height: 100vh;
                 z-index: 1000;
                 transition: left 0.3s;
+                background-color: #fff;
+                top: 0;
+                padding-top: 70px;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             }
 
             .sidebar.show {
@@ -205,10 +210,90 @@
 
             .content-area {
                 margin-left: 0;
+                padding: 20px 15px;
+            }
+            
+            .dashboard-card {
+                padding: 20px;
+                margin-bottom: 15px;
+            }
+            
+            .stat-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            
+            .table-responsive {
+                padding: 15px;
+            }
+            
+            .form-section {
+                padding: 20px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            /* Mobile overlay */
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+            }
+            
+            .sidebar-overlay.show {
+                display: block;
             }
         }
 
-        /* Animation */
+        /* Mobile improvements */
+        @media (max-width: 576px) {
+            .dashboard-card h2 {
+                font-size: 1.5rem;
+            }
+            
+            .dashboard-card h5 {
+                font-size: 1rem;
+            }
+            
+            .btn-custom {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .table {
+                font-size: 0.85rem;
+            }
+            
+            .modal-dialog {
+                margin: 10px;
+            }
+            
+            .form-label {
+                font-size: 0.9rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .row {
+                margin-left: -10px;
+                margin-right: -10px;
+            }
+            
+            .col-md-3, .col-md-4, .col-md-6 {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+        }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -230,6 +315,9 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
+            <button class="btn btn-light d-md-none me-2" type="button" onclick="toggleSidebar()">
+                <i class="bi bi-list"></i>
+            </button>
             <a class="navbar-brand" href="#">
                 <i class="bi bi-tree-fill"></i> Resort de Si Tia
             </a>
@@ -253,8 +341,17 @@
 
     <div class="container-fluid">
         <div class="row">
+            <!-- Sidebar Overlay for Mobile -->
+            <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+            
             <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 sidebar">
+            <nav class="col-md-3 col-lg-2 sidebar" id="sidebar">
+                <div class="d-flex justify-content-between align-items-center d-md-none px-3 mb-3">
+                    <h5 class="mb-0">เมนู</h5>
+                    <button class="btn btn-sm btn-light" onclick="toggleSidebar()">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link active" href="#" onclick="showSection('dashboard')">
@@ -359,7 +456,7 @@
                         <div class="input-group mt-3">
                             <input type="text" class="form-control" id="customerLink" readonly value="">
                             <button class="btn btn-success" onclick="copyLink()">
-                                <i class="bi bi-clipboard"></i> คัดลอก
+                                <i class="bi bi-clipboard"></i> <span class="d-none d-md-inline">คัดลอก</span>
                             </button>
                         </div>
                         <small class="text-muted">ส่งลิงก์นี้ให้ลูกค้าเพื่อจองห้องด้วยตนเอง</small>
@@ -1064,6 +1161,15 @@
             });
         }
 
+        // Toggle sidebar for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+
         // Show section
         function showSection(sectionId) {
             // Hide all sections
@@ -1079,6 +1185,11 @@
                 link.classList.remove('active');
             });
             event.target.classList.add('active');
+            
+            // Close sidebar on mobile after selection
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
             
             // Load section specific data
             switch(sectionId) {
